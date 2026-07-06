@@ -93,6 +93,15 @@
         .status-badge.paused { background: rgba(176,174,165,0.2); color: var(--mid-gray); }
         hr { border: none; border-top: 1px solid var(--light-gray); margin: 18px 0; }
 
+        /* Visible keyboard focus for all controls — WCAG 2.4.7 */
+        button:focus-visible,
+        .motif-btn:focus-visible,
+        .seed-input:focus-visible,
+        .slider-container input[type="range"]:focus-visible {
+            outline: 3px solid #3d3d3a;
+            outline-offset: 2px;
+        }
+
         /* Stacked layout: controls above, plate below */
         @media (max-width: 900px) {
             .container { flex-direction: column; align-items: center; }
@@ -121,22 +130,22 @@
 
         <div class="control-section">
             <h3>Motif</h3>
-            <div class="motif-buttons">
-                <button class="motif-btn active" onclick="setMotif('swan')"     id="btn-swan">Swan</button>
-                <button class="motif-btn"        onclick="setMotif('elephant')" id="btn-elephant">Elephant</button>
-                <button class="motif-btn"        onclick="setMotif('cat')"      id="btn-cat">Cat</button>
-                <button class="motif-btn"        onclick="setMotif('crab')"     id="btn-crab">Crab</button>
-                <button class="motif-btn"        onclick="setMotif('wolf')"     id="btn-wolf">Wolf</button>
-                <button class="motif-btn"        onclick="setMotif('moon')"     id="btn-moon">Crescent</button>
+            <div class="motif-buttons" role="group" aria-label="Choose a motif">
+                <button class="motif-btn active" onclick="setMotif('swan')"     id="btn-swan"     aria-pressed="true">Swan</button>
+                <button class="motif-btn"        onclick="setMotif('elephant')" id="btn-elephant" aria-pressed="false">Elephant</button>
+                <button class="motif-btn"        onclick="setMotif('cat')"      id="btn-cat"      aria-pressed="false">Cat</button>
+                <button class="motif-btn"        onclick="setMotif('crab')"     id="btn-crab"     aria-pressed="false">Crab</button>
+                <button class="motif-btn"        onclick="setMotif('wolf')"     id="btn-wolf"     aria-pressed="false">Wolf</button>
+                <button class="motif-btn"        onclick="setMotif('moon')"     id="btn-moon"     aria-pressed="false">Crescent</button>
             </div>
         </div>
         <hr>
 
         <div class="control-section">
             <h3>Hue Axis</h3>
-            <div class="motif-buttons">
-                <button class="motif-btn active" onclick="setHueAxis('redgreen')"   id="btn-redgreen">Red–Green</button>
-                <button class="motif-btn"        onclick="setHueAxis('blueyellow')" id="btn-blueyellow">Blue–Yellow</button>
+            <div class="motif-buttons" role="group" aria-label="Choose a hue axis">
+                <button class="motif-btn active" onclick="setHueAxis('redgreen')"   id="btn-redgreen"   aria-pressed="true">Red–Green</button>
+                <button class="motif-btn"        onclick="setHueAxis('blueyellow')" id="btn-blueyellow" aria-pressed="false">Blue–Yellow</button>
             </div>
         </div>
         <hr>
@@ -482,15 +491,22 @@ function updateParam(name, val, rebuild) {
 
 function setHueAxis(axis) {
     params.hueAxis = axis;
-    document.getElementById('btn-redgreen').classList.toggle('active', axis === 'redgreen');
-    document.getElementById('btn-blueyellow').classList.toggle('active', axis === 'blueyellow');
+    ['redgreen','blueyellow'].forEach(id => {
+        let btn = document.getElementById('btn-' + id);
+        let on = (id === axis);
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on);
+    });
     // No rebuild needed — color is computed per frame
 }
 
 function setMotif(name) {
     params.motif = name;
     ['wolf','swan','elephant','cat','crab','moon'].forEach(id => {
-        document.getElementById('btn-' + id).classList.toggle('active', id === name);
+        let btn = document.getElementById('btn-' + id);
+        let on = (id === name);
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on);
     });
     window._rebuild && window._rebuild();
 }
