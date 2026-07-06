@@ -99,6 +99,17 @@
             .sidebar { width: 100%; max-width: 700px; }
             .canvas-area { width: 100%; }
         }
+
+        /* Tablet and larger: sidebar scrolls within the viewport, plate top-aligned */
+        @media (min-width: 901px) {
+            .sidebar {
+                height: calc(100vh - 40px);
+                overflow-y: auto;
+                position: sticky;
+                top: 20px;
+            }
+            .canvas-area { align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
